@@ -130,13 +130,13 @@ public class SchedulerUtil {
 
     public static void runTaskForPlayer(Plugin plugin, Player player, Runnable runnable) {
         if (isFolia()) {
-            Object entityScheduler = callMethod(player, "getScheduler");
-            callMethod(entityScheduler, "run", new Class[]{Plugin.class, Consumer.class, Runnable.class},
-                plugin, (Consumer<?>) (task) -> runnable.run(), null);
+            Object entityScheduler = callMethod(player, "getHandle").getClass().getDeclaredMethod("getBukkitScheduler").invoke(callMethod(player, "getHandle"));
+            callMethod(entityScheduler, "scheduleSyncDelayedTask", new Class[]{Plugin.class, Runnable.class}, plugin, runnable);
             return;
         }
         Bukkit.getScheduler().runTask(plugin, runnable);
     }
+
 
     public static void cancelTasks(Plugin plugin) {
         if (isFolia()) {
